@@ -27,3 +27,30 @@ export const getLocation = async(req, res) => {
     }
 
 }
+
+export const searchLocations = async(req, res) => {
+
+    try {
+        
+        const results = await Location.aggregate(
+            [
+                {
+                  $search: {
+                    index: "drone",
+                    text: {
+                      query: req.params.key,
+                      path: {
+                        wildcard: "*"
+                      }
+                    }
+                  }
+                }
+              ]
+        )
+        res.status(200).json(results)
+
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+
+}
